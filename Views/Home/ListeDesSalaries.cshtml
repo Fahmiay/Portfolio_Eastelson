@@ -1,0 +1,133 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@model IPagedList<Portfolio_Eastelson.Models.Employee>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Salariés</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/ListeDesSalaries.css">
+</head>
+<body>
+
+    <div class="header">
+        <h1 class="top-left-title">Eastelson</h1>
+        <a href="@Url.Action("Logout", "Home")" class="btn btn-danger" id="logoutButton">Déconnexion</a>
+    </div>
+
+    <div class="name">
+        <h2>Liste des Salariés</h2>
+        @using (Html.BeginForm("ListeDesSalaries", "Home", FormMethod.Get))
+        {
+            <p>
+                @Html.TextBox("searchString")
+                <input type="submit" value="Rechercher" />
+            </p>
+        }
+    </div>
+
+    <div class="competence-table">
+        <ul>
+            @foreach (var employee in Model)
+            {
+                <li>
+                    <a href="@Url.Action("Contact", "Home", new { username = employee.Username })"
+                       onclick="setCurrentEmployeeId(@employee.Id)">
+                        @employee.FirstName @employee.LastName
+                    </a>
+                    <form action="@Url.Action("DeleteEmployee", "Home")" method="post" style="display:inline;">
+                        <input type="hidden" name="username" value="@employee.Username" />
+                        <!-- Bouton de suppression ajouté ici -->
+                        <input type="submit" value="Supprimer" onclick="return confirmDelete();" class="btn btn-danger" />
+                    </form>
+                </li>
+            }
+        </ul>
+    </div>
+
+
+    <div class="btn-container">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addEmployeeModal">
+            Ajouter un nouvel employé
+        </button>
+    </div>
+
+    <div>
+        @Html.PagedListPager(Model, page => Url.Action("ListeDesSalaries", new { page }))
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel" style="color: #000;">Ajouter un nouvel employé</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- L'ID "addEmployeeForm" est ajouté ici -->
+                    <form id="addEmployeeForm" action="@Url.Action("AddEmployee", "Home")" method="post">
+                        <input type="text" name="Username" placeholder="Username" required class="form-control" />
+                        <input type="text" name="PasswordHash" placeholder="Password" required class="form-control" />
+                        <input type="text" name="FirstName" placeholder="First Name" required class="form-control" />
+                        <input type="text" name="LastName" placeholder="Last Name" required class="form-control" />
+                        <input type="date" name="DateOfBirth" placeholder="Date of Birth" required class="form-control" />
+                        <input type="number" name="Salary" placeholder="Salary" required class="form-control" />
+                        <input type="text" name="PhotoPath" placeholder="Photo Path" class="form-control" />
+                        <div class="form-check">
+                            <input type="checkbox" name="IsAdmin" class="form-check-input" />
+                            <label class="form-check-label">Is Admin?</label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                            <button type="button" class="btn btn-primary" id="saveButton">Sauvegarder</button>
+                        </div>
+                    </form> <!-- fin du formulaire -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Votre JavaScript ici -->
+    <script>
+
+        // Déclaration de la variable currentEmployeeId
+        var currentEmployeeId;
+
+        // Déclaration de la fonction setCurrentEmployeeId
+        function setCurrentEmployeeId(employeeId) {
+            currentEmployeeId = employeeId;
+        }
+        $(document).ready(function(){
+    $("#saveButton").click(function(){
+        var formData = $("#addEmployeeForm").serialize();  // Ici
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddEmployee", "Home")',  // Assurez-vous que "Home" est le bon nom de contrôleur
+            data: formData,
+            success: function(response) {
+                $("#addEmployeeModal").modal('hide');
+                location.reload();
+            },
+            error: function(response) {
+                alert("Erreur lors de l'ajout de l'employé");
+            }
+        });
+    });
+        });
+
+
+    </script>
+    <script>
+        function confirmDelete() {
+            return window.confirm("Êtes-vous sûr de vouloir supprimer cet employé?");
+        }
+    </script>
+</body>
+</html>

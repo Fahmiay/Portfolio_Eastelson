@@ -1,0 +1,142 @@
+﻿body {
+    margin: 0;
+    padding: 0 15px;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to left, #2575fc, #6a11cb);
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.7);
+    background: linear-gradient(to left, #2575fc, #2575fc, black);
+    color: white;
+    text-align: center;
+    line-height: 50px;
+    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+/* Pour rendre "Eastelson" plus grand */
+.top-left-title {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 36px; /* Changé de 24px à 36px */
+    font-weight: bold;
+    letter-spacing: -1px;
+    line-height: 1;
+    color: white;
+}
+
+/* Pour rendre la photo plus grande */
+.photo-frame {
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 250px; /* Changé de 180px à 300px */
+    height: 300px; /* Changé de 200px à 400px */
+    border: 3px solid black;
+    background-color: white;
+}
+
+#photo {
+    width: 100%;
+    height: 100%;
+}
+
+
+.name {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.competence-table {
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+
+}
+
+    .competence-table table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+    }
+
+    .competence-table th {
+        background-color: #4a90e2;
+        color: white;
+        border: 1px solid white;
+        padding: 8px;
+        box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.1);
+    }
+
+    .competence-table td {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid white;
+        padding: 8px;
+        box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.1);
+    }
+
+        .competence-table th:hover, .competence-table td:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+.btn-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+    .btn:hover {
+        background-color: #555;
+        color: white;
+    }
+
+#submitMission {
+    background-color: #6a11cb;
+    color: white;
+}
+
+    #submitMission:hover {
+        background-color: #5011aa;
+    }
+
+.modal-body {
+    padding: 20px;
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+.form-group input {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+#logoutButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+}
+.btn-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn-success {
+    background-color: #28a745; /* Vert */
+    color: white;
+}

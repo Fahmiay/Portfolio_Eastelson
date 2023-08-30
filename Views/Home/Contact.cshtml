@@ -1,0 +1,217 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Contact-style.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+</head>
+<body>
+
+    <div class="header">
+        <h1 class="top-left-title">Eastelson</h1>
+        <a href="@Url.Action("Logout", "Home")" class="btn btn-danger" id="logoutButton">Déconnexion</a>
+    </div>
+
+    @if (Model.Employee != null)
+    {
+        <div class="photo-frame">
+            <img id="photo" src="@Url.Content(Model.Employee.PhotoPath)" alt="Votre photo">
+        </div>
+
+        <div class="name">
+            @Model.Employee.FirstName @Model.Employee.LastName
+            <br>
+            <span>Âge: @ViewBag.Age ans</span>
+        </div>
+
+        <div class="competence-table">
+            <table id="missionsTable" border="1">
+                <thead>
+                    <tr>
+                        <th>Poste</th>
+                        <th>Nom du Client</th>
+                        <th>Compétence Technique</th>
+                        <th>Date d'Entrée du Client</th>
+                        <th>Mission</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var mission in Model.Missions)
+                    {
+                        <tr>
+                            <td>@mission.Role</td>
+                            <td>@mission.ClientName</td>
+                            <td>@mission.TechnicalSkill</td>
+                            <td>@(mission.ClientEntryDate?.ToString("dd-MM-yyyy") ?? "Non défini")</td>
+                            <td>@mission.MissionDetails</td>
+                            <td>
+                                <a href="javascript:void(0);" onclick="deleteMission(@mission.MissionId)" class="btn btn-danger" role="button">Supprimer</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="name">Nom et Prénom</div>
+    }
+
+    <div class="btn-container text-center">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addMissionModal">
+            Ajouter une mission
+        </button>
+    </div>
+
+
+    <!-- Ajout du modal Bootstrap ici -->
+    <div class="modal fade" id="addMissionModal" tabindex="-1" aria-labelledby="addMissionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addMissionModalLabel">Ajouter une mission</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="missionForm">
+                        <div class="form-group">
+                            <label for="Role">Poste:</label>
+                            <input type="text" class="form-control" id="Role" name="Role">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientName">Nom du Client:</label>
+                            <input type="text" class="form-control" id="clientName" name="clientName">
+                        </div>
+                        <div class="form-group">
+                            <label for="technicalSkill">Compétence Technique:</label>
+                            <input type="text" class="form-control" id="technicalSkill" name="technicalSkill">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientEntryDate">Date d'Entrée du Client:</label>
+                            <input type="date" class="form-control" id="clientEntryDate" name="clientEntryDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="missionDetails">Mission:</label>
+                            <input type="text" class="form-control" id="missionDetails" name="missionDetails">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" id="submitMission" class="btn btn-primary">Valider</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap et JQuery -->
+
+    <script src="~/Scripts/popper.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            // Assurez-vous que Model.Employee.Id est bien défini dans votre modèle C#
+            var currentEmployeeId = @Model.Employee.Id;  // Remplacez par le bon code C# pour obtenir l'ID de l'employé
+
+            // Définir la variable pour une utilisation ultérieure dans d'autres scripts
+            window.currentEmployeeId = currentEmployeeId;
+        });
+    </script>
+    <!-- Votre code JavaScript ici -->
+    <script>
+        // Utilisez un tri personnalisé pour les dates au format "dd-MM-yyyy"
+        $.fn.dataTable.ext.type.order['date-eu-pre'] = function (date) {
+            date = date.replace("Non défini", "01-01-1900"); // Remplacez "Non défini" par une date très ancienne
+            var eu_date = date.split('-');
+            return (eu_date[2] + eu_date[1] + eu_date[0]) * 1;
+        };
+
+        $(document).ready(function () {
+            $('#missionsTable').DataTable({
+                "columns": [
+                    null,
+                    null,
+                    null,
+                    { "type": "date-eu" },  // Spécifiez le type de la 4ème colonne
+                    null,
+                    null
+                ],
+                "order": [[3, "desc"]]  // Trie par la 4ème colonne dans l'ordre décroissant
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById("submitMission").addEventListener("click", function () {
+                var formData = new FormData(document.getElementById("missionForm"));
+                var mission = {};
+                formData.forEach((value, key) => {
+                    mission[key] = value;
+                });
+
+                // Assurez-vous que currentEmployeeId est bien défini
+                if (typeof currentEmployeeId === 'undefined' || currentEmployeeId === null) {
+                    alert("ID de l'employé non défini");
+                    return;
+                }
+
+                // AJAX pour soumettre le formulaire
+                fetch('/Home/AjouterMission', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ mission: mission, employeeId: currentEmployeeId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            $('#addMissionModal').modal('hide');
+                            location.reload();
+                        } else {
+                            alert("Erreur lors de l'ajout de la mission.");
+                        }
+                    });
+            });
+        });
+
+        function deleteMission(missionId) {
+            // Assurez-vous que currentEmployeeId est bien défini
+            if (typeof currentEmployeeId === 'undefined' || currentEmployeeId === null) {
+                alert("ID de l'employé non défini");
+                return;
+            }
+
+            $.ajax({
+                url: '/Home/SupprimerMission', // Assurez-vous que l'URL est correcte
+                type: 'POST',
+                data: {
+                    id: missionId,
+                    employeeId: currentEmployeeId // Vous devrez peut-être ajouter ce paramètre à votre méthode côté serveur
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Rechargez la page ou faites quelque chose d'autre ici
+                        location.reload();
+                    } else {
+                        alert('Erreur lors de la suppression de la mission');
+                    }
+                },
+                error: function () {
+                    alert('Une erreur s\'est produite');
+                }
+            });
+        }
+    </script>
+
+
+</body>
+</html>

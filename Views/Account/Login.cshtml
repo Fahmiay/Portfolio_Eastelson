@@ -1,0 +1,58 @@
+﻿
+@model Portfolio_Eastelson.Models.LoginModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page d'authentification</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/login-style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <h1 class="top-left-title">Portfolio</h1>
+            <h1 class="main-title">Eastelson</h1>
+        </header>
+
+        <section class="auth-container">
+            <h2>Authentification</h2>
+            <div class="form-container">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken() <!-- Protection contre les attaques CSRF -->
+
+                    <div class="input-group">
+                        @Html.LabelFor(model => model.Username, new { @class = "input-label" })
+                        @Html.TextBoxFor(model => model.Username, new { @class = "input-field", @placeholder = "Nom d'utilisateur" })
+                    </div>
+
+                    <div class="input-group">
+                        @Html.LabelFor(model => model.Password, new { @class = "input-label" })                     
+                        @Html.PasswordFor(model => model.Password, new { @class = "input-field", @placeholder = "Mot de passe", autocomplete = "off" })
+                    </div>
+
+                    <button type="submit" class="submit-btn">Se connecter</button>
+
+                    <!-- Lien pour le mot de passe oublié -->
+                    <div class="forgot-password">
+                        <a href="/forgot-password">Mot de passe oublié ?</a>
+                    </div>
+                }
+
+                <!-- Affichage du message d'erreur -->
+                @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+                {
+                    <div class="error-message">@ViewBag.ErrorMessage</div>
+                }
+            </div>
+        </section>
+
+        <footer>
+            <!-- Vous pouvez ajouter un pied de page si nécessaire -->
+        </footer>
+    </div>
+</body>
+</html>
+</html>
+
